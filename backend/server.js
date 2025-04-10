@@ -1,30 +1,33 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-require('dotenv').config({ path: '../.env' });
-console.log('DEBUG MONGO_URI:', process.env.MONGO_URI);
+const bookRoutes = require('./routes/bookRoutes'); // importuojame knygų maršrutus
 
-const PORT = 3000;
+// .env failas nuo žoddžio enviromental (aplinka) - tai tekstinis failas, kuriame saugomi aplinkos kintamieji,
+// kurių nenorime, kad kiti turetu. Dažniausiai tai yra slapta informacija, pavyzdžiui, slaptažodžiai, API raktai ir pan.
+// Šis failas yra ignoruojamas git, todėl jis nėra viešai prieinamas.
+// dotenv - tai paketas, kuris leidžia naudoti aplinkos kintamuosius
+dotenv.config();
+
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB prisijungimas
+app.use('/api/books', bookRoutes);
 
-// app.listen(PORT, () => {
-//   console.log(`Server is running on http://localhost:${PORT}`);
-// });
-
-// MongoDB prisijungimas
+// Mongoose biklioteka, kuri leidžia sukurti ryšį tarp mūsų serverio į mūsų MongoDB duomenu bazes
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('✅ Prisijungta prie MongoDB!');
-
-    // Startuojam serverį tik kai prisijungiam prie DB
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-    });
+    console.log('Connected to MongoDB Atlas');
   })
-  .catch((err) => console.error('MongoDB klaida:', err));
+  .catch((error) => {
+    console.error('Error connecting to MongoDB Atlas:', error);
+  });
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
