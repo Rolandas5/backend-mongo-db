@@ -29,6 +29,8 @@ const bookSchema = new mongoose.Schema(
     collection: 'books', // kolekcijos pavadinimas, kurioje bus saugomi duomenys
     // Nurodau, kad noriu kad sukurtų createdAt ir updatedAt laukus, kurie bus automatiškai atnaujinami
     timestamps: true, // sukuriami createdAt ir updatedAt laukai
+
+    versionKey: false, // išjungiam automatinį versijos numerio generavimą
   }
 );
 
